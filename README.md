@@ -27,21 +27,21 @@ backup_system
 ├── logs
 ├── README.md
 └── scripts
-    ├── backup_all
-    ├── backup_check
-    ├── bash_backup
-    ├── direnv_backup
-    ├── icon_backup
-    ├── ipython_backup
-    ├── nvim_backup
-    ├── package_backup
-    ├── powershell_backup
-    ├── python_backup
-    ├── sql_backup
-    ├── vault_backup
-    ├── wt_backup
-    ├── zellij_backup
-    └── zshrc_backup
+    ├── backup-all
+    ├── backup-check
+    ├── bash-backup
+    ├── direnv-backup
+    ├── icon-backup
+    ├── ipython-backup
+    ├── nvim-backup
+    ├── package-backup
+    ├── powershell-backup
+    ├── python-backup
+    ├── sql-backup
+    ├── vault-backup
+    ├── wt-backup
+    ├── zellij-backup
+    └── zshrc-backup
 
 3 directories, 16 files
 ```
