@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+# ================================================================================
+# =                                  SQL_BACKUP                                  =
+# ================================================================================
+
+# Backup SQL directory to dual restic repositories
+# - Backs up to local Pi (R1) and cloud B2 (R2)
+# - Prunes old snapshots, keeping last 7
+
+set -euo pipefail
+
+# Backup
+restic -r "$R1" backup ~/sql --tag sql
+restic -r "$R2" backup ~/sql --tag sql
+
+# Prune
+restic -r "$R1" forget --tag sql --keep-last 7 --prune
+restic -r "$R2" forget --tag sql --keep-last 7 --prune
+
+echo "SQL backup completed successfully"

@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+# ================================================================================
+# =                                 VAULT_BACKUP                                 =
+# ================================================================================
+
+# Backup Obsidian vault to dual restic repositories
+# - Backs up to local Pi (R1) and cloud B2 (R2)
+# - Prunes old snapshots, keeping last 7
+
+set -euo pipefail
+
+# Backup
+restic -r "$R1" backup ~/vault --tag vault
+restic -r "$R2" backup ~/vault --tag vault
+
+# Prune
+restic -r "$R1" forget --tag vault --keep-last 7 --prune
+restic -r "$R2" forget --tag vault --keep-last 7 --prune
+
+echo "Vault backup completed successfully"

@@ -1,0 +1,83 @@
+#!/usr/bin/env bash
+
+# ================================================================================
+# =                                PACKAGE_BACKUP                                =
+# ================================================================================
+
+# Collect package lists from all systems and backup to restic
+# - ArchLinux WSL: yay, uv, npm packages
+# - Windows: winget packages
+# - Debian Pi: apt packages
+
+set -euo pipefail
+
+# Setup temp directory
+PKG_DIR=~/temp
+mkdir -p "$PKG_DIR"
+
+echo "Collecting package lists..."
+
+# --- 1. ArchLinux WSL (local) ---
+echo "  → ArchLinux packages (yay)..."
+yay -Qqe >"$PKG_DIR/arch_wsl_yay.txt"
+
+echo "  → ArchLinux packages (uv)..."
+UV_FILE="$PKG_DIR/arch_wsl_uv.txt"
+>"$UV_FILE"
+
+# Main environment
+echo "# main" >>"$UV_FILE"
+uv pip freeze >>"$UV_FILE"
+echo "" >>"$UV_FILE"
+
+# UV tools
+echo "# uv tools" >>"$UV_FILE"
+uv tool list >>"$UV_FILE"
+echo "" >>"$UV_FILE"
+
+# Virtual environments
+VENV_ROOT=~/venvs
+if [ -d "$VENV_ROOT" ]; then
+  for venv_path in "$VENV_ROOT"/*; do
+    if [ -d "$venv_path/bin" ]; then
+      venv_name=$(basename "$venv_path")
+      echo "# $venv_name" >>"$UV_FILE"
+      source "$venv_path/bin/activate"
+      uv pip freeze >>"$UV_FILE"
+      echo "" >>"$UV_FILE"
+      deactivate
+    fi
+  done
+fi
+
+echo "  → ArchLinux packages (npm)..."
+npm ls -g --depth=0 --parseable | tail -n +2 | xargs -n1 basename >"$PKG_DIR/arch_wsl_npm.txt"
+
+# --- 2. Windows (via PowerShell from WSL) ---
+echo "  → Windows packages (winget)..."
+powershell.exe -Command "winget export --ignore-warnings -o $PKG_DIR/windows_desktop_winget.json"
+
+# --- 3. Debian Pi (remote SSH) ---
+echo "  → Debian Pi packages (apt)..."
+REMOTE_USER="master"
+REMOTE_HOST="10.0.0.181"
+REMOTE_TEMP="/home/master/temp/manual_debian_packages.txt"
+DEBIAN_CMD="comm -23 <(apt-mark showmanual | sort) <(apt-mark showauto | sort) > $REMOTE_TEMP"
+
+ssh "$REMOTE_USER@$REMOTE_HOST" "bash -c '$DEBIAN_CMD'"
+ssh "$REMOTE_USER@$REMOTE_HOST" "cat $REMOTE_TEMP" >"$PKG_DIR/debian_pi_apt.txt"
+
+# --- 4. Backup to restic ---
+echo "Backing up to restic..."
+restic -r "$R1" backup "$PKG_DIR" --tag packages
+restic -r "$R2" backup "$PKG_DIR" --tag packages
+
+# --- 5. Prune old snapshots ---
+echo "Pruning old snapshots..."
+restic -r "$R1" forget --tag packages --keep-last 1 --prune
+restic -r "$R2" forget --tag packages --keep-last 1 --prune
+
+# --- 6. Clean up ---
+rm -rf "$PKG_DIR"
+
+echo "Package lists backed up successfully"

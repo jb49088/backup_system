@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+# ================================================================================
+# =                                PYTHON_BACKUP                                 =
+# ================================================================================
+
+# Backup python directory to dual restic repositories
+# - Backs up to local Pi (R1) and cloud B2 (R2)
+# - Prunes old snapshots, keeping last 7
+
+set -euo pipefail
+
+# Backup
+restic -r "$R1" backup ~/python --tag python
+restic -r "$R2" backup ~/python --tag python
+
+# Prune
+restic -r "$R1" forget --tag python --keep-last 7 --prune
+restic -r "$R2" forget --tag python --keep-last 7 --prune
+
+echo "Python backup completed successfully"

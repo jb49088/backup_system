@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+# ================================================================================
+# =                                 ICON_BACKUP                                  =
+# ================================================================================
+
+# Backup icons directory to dual restic repositories
+# - Backs up to local Pi (R1) and cloud B2 (R2)
+# - Prunes old snapshots, keeping last 1
+
+set -euo pipefail
+
+# Backup
+restic -r "$R1" backup ~/icons --tag icons
+restic -r "$R2" backup ~/icons --tag icons
+
+# Prune
+restic -r "$R1" forget --tag icons --keep-last 1 --prune
+restic -r "$R2" forget --tag icons --keep-last 1 --prune
+
+echo "Icons backup completed successfully"

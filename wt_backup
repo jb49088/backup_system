@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+# ================================================================================
+# =                                   WT_BACKUP                                  =
+# ================================================================================
+
+# Backup Windows Terminal settings to dual restic repositories
+# - Backs up to local Pi (R1) and cloud B2 (R2)
+# - Prunes old snapshots, keeping last 1
+
+set -euo pipefail
+
+# Define paths
+SOURCE_FILE="/mnt/c/Users/justin/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json"
+TEMP_DIR=~/temp
+TEMP_FILE="$TEMP_DIR/wt_settings.json"
+
+# Ensure temp directory exists
+mkdir -p "$TEMP_DIR"
+
+# Copy the file to temp location
+cp "$SOURCE_FILE" "$TEMP_FILE"
+
+# Backup
+restic -r "$R1" backup "$TEMP_FILE" --tag wt
+restic -r "$R2" backup "$TEMP_FILE" --tag wt
+
+# Prune
+restic -r "$R1" forget --tag wt --keep-last 1 --prune
+restic -r "$R2" forget --tag wt --keep-last 1 --prune
+
+# Clean up temp file
+rm -f "$TEMP_FILE"
+
+echo "Windows Terminal settings backup completed successfully"

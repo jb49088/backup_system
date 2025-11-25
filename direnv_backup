@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+# ================================================================================
+# =                                DIRENV_BACKUP                                 =
+# ================================================================================
+
+# Backup direnv configuration to dual restic repositories
+# - Backs up to local Pi (R1) and cloud B2 (R2)
+# - Prunes old snapshots, keeping last 1
+
+set -euo pipefail
+
+# Backup
+restic -r "$R1" backup ~/.config/direnv --tag direnv
+restic -r "$R2" backup ~/.config/direnv --tag direnv
+
+# Prune
+restic -r "$R1" forget --tag direnv --keep-last 1 --prune
+restic -r "$R2" forget --tag direnv --keep-last 1 --prune
+
+echo "Direnv backup completed successfully"

@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+# ================================================================================
+# =                                 BASH_BACKUP                                  =
+# ================================================================================
+
+# Backup bash directory to dual restic repositories
+# - Backs up to local Pi (R1) and cloud B2 (R2)
+# - Prunes old snapshots, keeping last 7
+
+set -euo pipefail
+
+# Backup
+restic -r "$R1" backup ~/bash --tag bash
+restic -r "$R2" backup ~/bash --tag bash
+
+# Prune
+restic -r "$R1" forget --tag bash --keep-last 7 --prune
+restic -r "$R2" forget --tag bash --keep-last 7 --prune
+
+echo "Bash backup completed successfully"

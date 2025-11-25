@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+
+# ================================================================================
+# =                                ZSHRC_BACKUP                                  =
+# ================================================================================
+
+# Backup zshrc files from local and remote systems
+# - Local WSL .zshrc and .zshrc.local
+# - Remote Pi .zshrc and .zshrc.local
+
+set -euo pipefail
+
+# Setup temp directory
+TEMP_DIR=~/temp/zshrc
+mkdir -p "$TEMP_DIR"
+
+echo "Collecting zshrc files..."
+
+# Local ArchLinux (WSL)
+echo "  → Local .zshrc..."
+cp ~/.zshrc "$TEMP_DIR/.zshrc.wsl"
+
+echo "  → Local .zshrc.local..."
+cp ~/.zshrc.local "$TEMP_DIR/.zshrc.local.wsl"
+
+# Remote Debian (Pi)
+REMOTE_USER="master"
+REMOTE_HOST="10.0.0.181"
+
+echo "  → Remote Pi .zshrc..."
+ssh "$REMOTE_USER@$REMOTE_HOST" "cat /home/master/.zshrc" > "$TEMP_DIR/.zshrc.pi"
+
+echo "  → Remote Pi .zshrc.local..."
+ssh "$REMOTE_USER@$REMOTE_HOST" "cat /home/master/.zshrc.local" > "$TEMP_DIR/.zshrc.local.pi"
+
+# Backup to Restic
+restic -r "$R1" backup "$TEMP_DIR" --tag zshrc
+restic -r "$R2" backup "$TEMP_DIR" --tag zshrc
+
+# Prune old snapshots
+restic -r "$R1" forget --tag zshrc --keep-last 1 --prune
+restic -r "$R2" forget --tag zshrc --keep-last 1 --prune
+
+# Clean up
+rm -rf "$TEMP_DIR"
+
+echo "Zshrc files backed up successfully"

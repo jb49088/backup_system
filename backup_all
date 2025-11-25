@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+
+# ================================================================================
+# =                                  BACKUP_ALL                                  =
+# ================================================================================
+
+# Master backup script - runs all individual backup scripts
+
+set -euo pipefail
+
+echo "=================================="
+echo "    Starting Master Backup"
+echo "=================================="
+echo ""
+
+# Array of backup scripts to run
+scripts=(
+  "powershell_backup"
+  "python_backup"
+  "vault_backup"
+  "zshrc_backup"
+  "zellij_backup"
+  "icon_backup"
+  "ipython_backup"
+  "nvim_backup"
+  "package_backup"
+  "bash_backup"
+  "direnv_backup"
+  "sql_backup"
+  "wt_backup"
+)
+
+# Track failures
+failed_scripts=()
+
+# Run each script
+for script in "${scripts[@]}"; do
+  echo "Running $script..."
+  if "$script"; then
+    echo ""
+  else
+    echo "$script FAILED"
+    failed_scripts+=("$script")
+    echo ""
+  fi
+done
+
+echo "=================================="
+echo "    Master Backup Complete"
+echo "=================================="
+
+# Report any failures
+if [ ${#failed_scripts[@]} -eq 0 ]; then
+  echo "All backups completed successfully!"
+else
+  echo "Some backups failed:"
+  for script in "${failed_scripts[@]}"; do
+    echo "  - $script"
+  done
+  exit 1
+fi
