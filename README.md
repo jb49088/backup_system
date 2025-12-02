@@ -11,9 +11,9 @@ A comprehensive backup automation system built on [Restic](https://github.com/re
 Language                      files          blank        comment           code
 --------------------------------------------------------------------------------
 Bourne Again Shell               16            134            151            289
-Markdown                          1              8              4             36
+Markdown                          1              8              4             37
 --------------------------------------------------------------------------------
-SUM:                             17            142            155            325
+SUM:                             17            142            155            326
 --------------------------------------------------------------------------------
 ```
 <!-- CODE_STATISTICS_END -->

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # ================================================================================
-# =                                PACKAGE_BACKUP                                =
+# =                                PACKAGE-BACKUP                                =
 # ================================================================================
 
 # Collect package lists from all systems and backup to restic

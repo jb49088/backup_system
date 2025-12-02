@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # ================================================================================
-# =                                DIRENV_BACKUP                                 =
+# =                                DIRENV-BACKUP                                 =
 # ================================================================================
 
 # Backup direnv configuration to dual restic repositories

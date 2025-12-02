@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # ================================================================================
-# =                             POWERSHELL_BACKUP                                =
+# =                              POWERSHELL-BACKUP                               =
 # ================================================================================
 
 # Backup PowerShell scripts to dual restic repositories

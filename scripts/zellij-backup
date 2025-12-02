@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # ================================================================================
-# =                                ZELLIJ_BACKUP                                 =
+# =                                ZELLIJ-BACKUP                                 =
 # ================================================================================
 
 # Backup Zellij configuration to dual restic repositories

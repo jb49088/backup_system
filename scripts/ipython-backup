@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # ================================================================================
-# =                                IPYTHON_BACKUP                                =
+# =                                IPYTHON-BACKUP                                =
 # ================================================================================
 
 # Backup IPython configuration to dual restic repositories

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # ================================================================================
-# =                                PYTHON_BACKUP                                 =
+# =                                PYTHON-BACKUP                                 =
 # ================================================================================
 
 # Backup python directory to dual restic repositories

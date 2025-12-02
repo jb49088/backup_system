@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # ================================================================================
-# =                                   WT_BACKUP                                  =
+# =                                  WT-BACKUP                                   =
 # ================================================================================
 
 # Backup Windows Terminal settings to dual restic repositories

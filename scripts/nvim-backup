@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # ================================================================================
-# =                                 NVIM_BACKUP                                  =
+# =                                 NVIM-BACKUP                                  =
 # ================================================================================
 
 # Backup Neovim configuration to dual restic repositories
