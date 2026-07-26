@@ -27,8 +27,13 @@ backup_stats() {
 }
 
 restic_backup() {
+    local test_cmd="test"
     local cmd="restic"
-    [[ "$1" == "true" ]] && cmd="sudo --preserve-env restic"
+
+    [[ "$1" == "true" ]] && {
+        test_cmd="sudo test"
+        cmd="sudo --preserve-env restic"
+    }
     shift
 
     local tag="$1"
@@ -37,13 +42,13 @@ restic_backup() {
     local paths=()
     for path in "$@"; do
         # If path exists on system, append to paths array
-        [[ -e "$path" ]] && paths+=("$path")
+        $test_cmd -e "$path" && paths+=("$path")
     done
     # If paths array is empty, return early
     ((${#paths[@]} == 0)) && return
 
     for repo in "${REPOSITORIES[@]}"; do
-        $cmd --repo "$repo" backup "${paths[@]}" --tag "$tag" </dev/tty
+        $cmd --repo "$repo" backup "${paths[@]}" --tag "$tag"
         # Sudo backups write cache files as root
         # Fix ownership before the non-sudo forget below
         [[ "$cmd" != "restic" ]] && sudo chown -R "$USER:$USER" "$HOME/.cache/restic"
