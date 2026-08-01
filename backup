@@ -48,10 +48,11 @@ restic_backup() {
     ((${#paths[@]} == 0)) && return
 
     for repo in "${REPOSITORIES[@]}"; do
-        $cmd --repo "$repo" backup "${paths[@]}" --tag "$tag"
+        # </dev/tty: allows ssh interactive prompts to reach the terminal through the while read loop
+        $cmd --repo "$repo" backup "${paths[@]}" --tag "$tag" </dev/tty
         # Sudo backups write cache files as root
         # Fix ownership before the non-sudo forget below
-        [[ "$cmd" != "restic" ]] && sudo chown -R "$USER:$USER" "$HOME/.cache/restic"
+        [[ "$cmd" == "sudo --preserve-env restic" ]] && sudo chown -R "$USER:$USER" "$HOME/.cache/restic" </dev/tty
         # Group by hosts and tags to prevent path changes from creating orphaned snapshots
         # Restic forget never needs sudo
         restic --repo "$repo" forget --host "$HOSTNAME" --tag "$tag" --keep-last 7 --group-by hosts,tags --prune
