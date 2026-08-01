@@ -48,7 +48,7 @@ restic_backup() {
     ((${#paths[@]} == 0)) && return
 
     for repo in "${REPOSITORIES[@]}"; do
-        # </dev/tty: allows ssh interactive prompts to reach the terminal through the while read loop
+        # </dev/tty: allows sudo interactive prompts to reach the terminal through the while read loop
         $cmd --repo "$repo" backup "${paths[@]}" --tag "$tag" </dev/tty
         # Sudo backups write cache files as root
         # Fix ownership before the non-sudo forget below
